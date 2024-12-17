@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "124193868831",
+    "project_id": "vetementia",
+    "storage_bucket": "vetementia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124193868831:android:d9eab3530325a28388d92a",
+        "android_client_info": {
+          "package_name": "com.amine"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjgF6OwxyfbkASirGMp05koeBJ246GAq4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
