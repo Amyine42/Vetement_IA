@@ -80,39 +80,39 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _saveUserData() async {
-    if (!_formKey.currentState!.validate()) return;
+  if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isSaving = true);
+  setState(() => _isSaving = true);
 
-    try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) return;
+  try {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return;
 
-      // Mettre à jour les informations de l'utilisateur dans la base de données
-      await _database.child('users/$userId').update({
-        'anniversaire': _anniversaireController.text,
-        'adresse': _adresseController.text,
-        'code_postal': _codePostalController.text,
-        'ville': _villeController.text,
-      });
+    // Mettre à jour les informations de l'utilisateur dans la base de données
+    await _database.child('users/$userId').update({
+      'anniversaire': _anniversaireController.text,
+      'adresse': _adresseController.text,
+      'code_postal': _codePostalController.text,
+      'ville': _villeController.text,
+    });
 
-      // Si un nouveau mot de passe est fourni, le mettre à jour
-      if (_passwordController.text.isNotEmpty) {
-        await _auth.currentUser?.updatePassword(_passwordController.text);
-        _passwordController.clear(); // Vider le champ après la mise à jour
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil mis à jour avec succès')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur lors de la mise à jour: $e')),
-      );
-    } finally {
-      setState(() => _isSaving = false);
+    // Ne pas mettre à jour le mot de passe s'il est toujours "******"
+    if (_passwordController.text.isNotEmpty && _passwordController.text != '******') {
+      await _auth.currentUser?.updatePassword(_passwordController.text);
+      _passwordController.clear();
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Profil mis à jour avec succès')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Erreur lors de la mise à jour: $e')),
+    );
+  } finally {
+    setState(() => _isSaving = false);
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -134,9 +134,9 @@ class _ProfilePageState extends State<ProfilePage> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: TextButton(
-              onPressed: _isSaving ? null : _saveUserData,
+              onPressed: _handleLogout,
               child: Text(
-                'Valider',
+                'Se déconnecter',
                 style: TextStyle(
                   color: _isSaving ? Colors.grey : Colors.blue,
                   fontSize: 16,
@@ -220,13 +220,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // Bouton de déconnexion
                   ElevatedButton(
-                    onPressed: _handleLogout,
+                    onPressed: _isSaving ? null : _saveUserData,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: const Text(
-                      'Se déconnecter',
+                      'Valider',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

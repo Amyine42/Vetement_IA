@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'profile_page.dart';
+import 'package:flutter/material.dart';
+import 'shop_content.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,20 +12,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  // Liste des pages/vues à afficher
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   final List<Widget> _pages = [
-    // Page Acheter (Home)
-    const Center(child: Text('Page Acheter')),
-    // Page Panier
+    const ShopContent(),
     const Center(child: Text('Page Panier')),
-    // Page Profil
     const ProfilePage(),
   ];
 
-  // Titre dynamique selon la page sélectionnée
   PreferredSizeWidget? _buildAppBar() {
     if (_selectedIndex == 2) {
-      // Pas d'AppBar pour la page profil car elle a son propre AppBar
       return null;
     }
     return AppBar(
@@ -38,12 +39,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
