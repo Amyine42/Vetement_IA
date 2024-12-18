@@ -30,7 +30,6 @@ class _ShopContentState extends State<ShopContent> {
 
         data.forEach((key, value) {
           if (value is List) {
-            print('Catégorie $key données : $value');
             categories[key.toString()] = value
                 .map((item) => Map<String, dynamic>.from(item))
                 .toList();
@@ -45,7 +44,6 @@ class _ShopContentState extends State<ShopContent> {
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print('Erreur lors du chargement des vêtements: $e');
       setState(() => _isLoading = false);
     }
   }
