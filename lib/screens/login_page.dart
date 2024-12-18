@@ -1,114 +1,112 @@
 import 'package:flutter/material.dart';
+import '../services/AuthService.dart';
+import 'home_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
+class Login extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginState createState() => _LoginState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _loginController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  void _handleLogin() async {
-    final login = _loginController.text;
-    final password = _passwordController.text;
-
-    // Simulation d'une vérification en base
-    try {
-      bool userExists = await checkUserInDatabase(login, password);
-
-      if (userExists) {
-        // Navigation vers la page suivante
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const NextPage()),
-        );
-      } else {
-        // Log dans la console si l'utilisateur n'existe pas
-        print('Utilisateur non trouvé: $login');
-      }
-    } catch (e) {
-      print('Erreur lors de la vérification: $e');
-    }
-  }
-
-  // Simulation de vérification en base de données
-  Future<bool> checkUserInDatabase(String login, String password) async {
-    // TODO: Implémenter la vraie vérification en base
-    await Future.delayed(const Duration(seconds: 1)); // Simulation de délai réseau
-    return login == "test" && password == "test";
-  }
-
-  @override
-  void dispose() {
-    _loginController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+class _LoginState extends State<Login> {
+  String email = '';
+  String password = '';
+  final _formKey = GlobalKey<FormState>();
+  final AuthService _auth = AuthService();
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: const Text('Mon Application'), // Critère #1: headerBar avec nom
-        centerTitle: true,
+        title: Text('Vetement IA'),
+        backgroundColor: const Color.fromARGB(255, 206, 175, 186),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Critère #2: Champ Login
-            TextField(
-              controller: _loginController,
-              decoration: const InputDecoration(
-                labelText: 'Login',
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView(  // Make the whole body scrollable to prevent overflow
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 100.0, // Width of the image container
+                height: 100.0, // Height of the image container
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle, // Make it round
+                  image: DecorationImage(
+                    image: AssetImage('images/clothes_logo.jpg'),
+                    fit: BoxFit.cover, // This makes sure the image covers the container
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // Critère #2 & #3: Champ Password obfusqué
-            TextField(
-              controller: _passwordController,
-              obscureText: true, // Critère #3: Password obfusqué
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+              SizedBox(height: 50.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Login',
+                  prefixIcon: Icon(Icons.person),
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    email = val;
+                  });
+                },
+                validator: (val) => val != null && val.isEmpty ? 'Enter a valid email' : null,
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // Critère #4: Bouton "Se connecter"
-            ElevatedButton(
-              onPressed: _handleLogin, // Critère #5 & #6: Gestion de la connexion
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  prefixIcon: Icon(Icons.lock),
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    password = val;
+                  });
+                },
+                validator: (val) => val!.length < 6
+                    ? 'Entrer un mot de passe de plus de 6 caractères'
+                    : null,
+                obscureText: true,
               ),
-              child: const Text(
-                'Se connecter',
-                style: TextStyle(fontSize: 16),
+              SizedBox(height: 40),
+              ElevatedButton(
+                child: Text(
+                  'Se connecter',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                ),
+                onPressed: () async {
+                  if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                    dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                    if (result == null) {
+                      setState(() {
+                        error = 'Erreur de connexion';
+                      });
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomePage()),//HomePage()
+                      );
+                    }
+                  }
+                },
               ),
-            ),
-          ],
+              SizedBox(height: 12.0),
+              Text(
+                error,
+                style: TextStyle(color: Colors.red, fontSize: 14.0),
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-}
-
-// Page suivante (à remplacer par votre vraie page)
-class NextPage extends StatelessWidget {
-  const NextPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page Suivante')),
-      body: const Center(child: Text('Connexion réussie!')),
     );
   }
 }
