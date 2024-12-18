@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,6 +9,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  // Liste des pages/vues à afficher
+  static const List<Widget> _pages = <Widget>[
+    // Page Acheter (Home)
+    Center(
+      child: Text('Page Acheter'),
+    ),
+    // Page Panier
+    Center(
+      child: Text('Page Panier'),
+    ),
+    // Page Profil
+    ProfilePage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,38 +45,25 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min, // This helps with sizing
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  CircleAvatar(
-                    radius: 40, // Reduced from 50
-                    backgroundImage: AssetImage('assets/images/photo_pro.jpeg'),
-                  ),
-                  SizedBox(height: 8), // Reduced from 10
-                  Text(
-                    'EL AYOUBI Amine',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20, // Reduced from 24
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: const Center(
-        child: Text('Welcome to the Home Page'),
+      body: _pages[_selectedIndex], // Affiche la page sélectionnée
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: 'Acheter',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Panier',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
       ),
     );
   }
