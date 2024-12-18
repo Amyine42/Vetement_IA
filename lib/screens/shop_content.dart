@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'profile_page.dart';
 
 // Widget pour le contenu de la boutique
 class ShopContent extends StatefulWidget {
@@ -31,6 +30,7 @@ class _ShopContentState extends State<ShopContent> {
 
         data.forEach((key, value) {
           if (value is List) {
+            print('Catégorie $key données : $value');
             categories[key.toString()] = value
                 .map((item) => Map<String, dynamic>.from(item))
                 .toList();
@@ -82,32 +82,35 @@ class _ShopContentState extends State<ShopContent> {
   }
 
   Widget _buildVetementCard(BuildContext context, Map<String, dynamic> vetement) {
-    return GestureDetector(
-      onTap: () {
-        _showVetementDetails(vetement);
-      },
-      child: Card(
-        margin: const EdgeInsets.all(8.0),
-        child: Container(
-          width: 180,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.network(
-                vetement['image'] ?? '',
-                height: 180,
-                width: 180,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 180,
-                    width: 180,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image_not_supported),
-                  );
-                },
-              ),
-              Padding(
+  return GestureDetector(
+    onTap: () {
+      _showVetementDetails(vetement);
+    },
+    child: Card(
+      margin: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 180,
+        // Définir une hauteur fixe pour la carte
+        height: 280, // Ajustez cette valeur si nécessaire
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(
+              vetement['image'] ?? '',
+              height: 180,
+              width: 180,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 180,
+                  width: 180,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.image_not_supported),
+                );
+              },
+            ),
+            Expanded( // Utiliser Expanded pour le contenu texte
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,16 +122,17 @@ class _ShopContentState extends State<ShopContent> {
                         fontSize: 12,
                       ),
                     ),
-                    Text(
-                      vetement['titre'] ?? '',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                    Expanded( // Expanded pour le titre
+                      child: Text(
+                        vetement['titre'] ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
                     Text(
                       '${vetement['prix']?.toString() ?? '0'} €',
                       style: const TextStyle(
@@ -139,18 +143,20 @@ class _ShopContentState extends State<ShopContent> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   void _showVetementDetails(Map<String, dynamic> vetement) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Container(
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => SingleChildScrollView(
+      child: Container(
         height: MediaQuery.of(context).size.height * 0.7,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +165,7 @@ class _ShopContentState extends State<ShopContent> {
               children: [
                 Image.network(
                   vetement['image'] ?? '',
-                  height: 300,
+                  height: 250, // Réduire un peu la hauteur de l'image
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -174,64 +180,78 @@ class _ShopContentState extends State<ShopContent> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    vetement['marque'] ?? '',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    vetement['titre'] ?? '',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${vetement['prix']?.toString() ?? '0'} €',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Tailles disponibles: ${(vetement['tailles'] as List<dynamic>).join(', ')}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Ajouté au panier')),
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text('Ajouter au panier'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Catégorie: ${vetement['categorie']?.toString().toUpperCase() ?? ''}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Marque: ${vetement['marque'] ?? ''}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        vetement['titre'] ?? '',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${vetement['prix']?.toString() ?? '0'} €',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Tailles disponibles: ${(vetement['tailles'] as List<dynamic>).join(', ')}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Ajouté au panier')),
+                            );
+                            Navigator.pop(context);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text('Ajouter au panier'),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16), // Ajouter un peu d'espace en bas
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
