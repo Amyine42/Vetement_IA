@@ -68,9 +68,6 @@ class _LoginState extends State<Login> {
                     password = val;
                   });
                 },
-                validator: (val) => val!.length < 6
-                    ? 'Entrer un mot de passe de plus de 6 caractères'
-                    : null,
                 obscureText: true,
               ),
               SizedBox(height: 40),

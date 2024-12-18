@@ -12,18 +12,33 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   // Liste des pages/vues à afficher
-  static const List<Widget> _pages = <Widget>[
+  final List<Widget> _pages = [
     // Page Acheter (Home)
-    Center(
-      child: Text('Page Acheter'),
-    ),
+    const Center(child: Text('Page Acheter')),
     // Page Panier
-    Center(
-      child: Text('Page Panier'),
-    ),
+    const Center(child: Text('Page Panier')),
     // Page Profil
-    ProfilePage(),
+    const ProfilePage(),
   ];
+
+  // Titre dynamique selon la page sélectionnée
+  PreferredSizeWidget? _buildAppBar() {
+    if (_selectedIndex == 2) {
+      // Pas d'AppBar pour la page profil car elle a son propre AppBar
+      return null;
+    }
+    return AppBar(
+      title: Text(_selectedIndex == 0 ? 'Home Page' : 'Panier'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            Navigator.pushNamed(context, '/login');
+          },
+        ),
+      ],
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,18 +49,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              Navigator.pushNamed(context, '/login');
-            },
-          ),
-        ],
-      ),
-      body: _pages[_selectedIndex], // Affiche la page sélectionnée
+      appBar: _buildAppBar(),
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
