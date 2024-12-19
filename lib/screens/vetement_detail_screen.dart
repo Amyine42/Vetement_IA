@@ -77,14 +77,6 @@ class _VetementDetailScreenState extends State<VetementDetailScreen> {
                         .toList(),
                   ),
                   SizedBox(height: 16),
-                  Text(
-                    'Couleurs disponibles',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
                 ],
               ),
             ),

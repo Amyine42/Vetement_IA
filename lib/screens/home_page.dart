@@ -1,6 +1,7 @@
 import 'profile_page.dart';
 import 'package:flutter/material.dart';
 import 'shop_content.dart';
+import 'cart_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const ShopContent(),
-    const Center(child: Text('Page Panier')),
+    const CartScreen(),
     const ProfilePage(),
   ];
 

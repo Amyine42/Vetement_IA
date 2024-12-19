@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
+import 'package:vetement_ia/services/cart_service.dart';
 
 // Widget pour le contenu de la boutique
 class ShopContent extends StatefulWidget {
@@ -114,12 +116,12 @@ class _ShopContentState extends State<ShopContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      vetement['marque'] ?? '',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
+                    'Taille: ${(vetement['tailles'] as List<dynamic>).join(', ')}',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
                     ),
+                  ),
                     Expanded( // Expanded pour le titre
                       child: Text(
                         vetement['titre'] ?? '',
@@ -227,6 +229,8 @@ class _ShopContentState extends State<ShopContent> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
+                            final cartService = context.read<CartService>();
+                            cartService.addItem(vetement);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Ajouté au panier')),
                             );

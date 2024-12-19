@@ -4,6 +4,7 @@ import 'home_page.dart';
 
 class Login extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
@@ -19,11 +20,11 @@ class _LoginState extends State<Login> {
     return Scaffold(
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: Text('Vetement IA'),
+        title: const Text('Vetement IA'),
         backgroundColor: const Color.fromARGB(255, 206, 175, 186),
       ),
       body: SingleChildScrollView(  // Make the whole body scrollable to prevent overflow
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -32,7 +33,7 @@ class _LoginState extends State<Login> {
               Container(
                 width: 100.0, // Width of the image container
                 height: 100.0, // Height of the image container
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle, // Make it round
                   image: DecorationImage(
                     image: AssetImage('assets/images/clothes_logo.jpg'),
@@ -40,9 +41,9 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
-              SizedBox(height: 50.0),
+              const SizedBox(height: 50.0),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Login',
                   prefixIcon: Icon(Icons.person),
                   fillColor: Colors.white,
@@ -55,9 +56,9 @@ class _LoginState extends State<Login> {
                 },
                 validator: (val) => val != null && val.isEmpty ? 'Enter a valid email' : null,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Password',
                   prefixIcon: Icon(Icons.lock),
                   fillColor: Colors.white,
@@ -70,12 +71,8 @@ class _LoginState extends State<Login> {
                 },
                 obscureText: true,
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               ElevatedButton(
-                child: Text(
-                  'Se connecter',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                 ),
@@ -94,11 +91,15 @@ class _LoginState extends State<Login> {
                     }
                   }
                 },
+                child: const Text(
+                  'Se connecter',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               Text(
                 error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0),
+                style: const TextStyle(color: Colors.red, fontSize: 14.0),
               ),
             ],
           ),

@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     controller: _emailController,
                     readOnly: true,
                     decoration: const InputDecoration(
-                      labelText: 'Login (Email)',
+                      labelText: 'Login',
                       border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Color(0xFFEEEEEE),
@@ -172,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     readOnly: true,
                     obscureText: true,
                     decoration: const InputDecoration(
-                      labelText: 'Mot de passe',
+                      labelText: 'Password',
                       border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Color(0xFFEEEEEE),
@@ -183,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   TextFormField(
                     controller: _anniversaireController,
                     decoration: const InputDecoration(
-                      labelText: 'Date de naissance',
+                      labelText: 'Anniversaire',
                       hintText: 'JJ/MM/AAAA',
                       border: OutlineInputBorder(),
                     ),
@@ -228,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: const Text(
                       'Valider',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color.fromARGB(255, 68, 214, 134),
                         fontSize: 16,
                       ),
                     ),
