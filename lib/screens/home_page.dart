@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
       return null;
     }
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Text(_selectedIndex == 0 ? 'Home Page' : 'Panier'),
       actions: [
         IconButton(

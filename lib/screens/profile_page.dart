@@ -96,10 +96,19 @@ class _ProfilePageState extends State<ProfilePage> {
       'ville': _villeController.text,
     });
 
-    // Ne pas mettre à jour le mot de passe s'il est toujours "******"
+    // Gérer le changement de mot de passe
     if (_passwordController.text.isNotEmpty && _passwordController.text != '******') {
-      await _auth.currentUser?.updatePassword(_passwordController.text);
-      _passwordController.clear();
+      try {
+        await _auth.currentUser?.updatePassword(_passwordController.text);
+        // Remettre les astérisques après le changement
+        _passwordController.text = '******';
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erreur lors du changement de mot de passe. Le mot de passe doit contenir au moins 6 caractères.')),
+        );
+        setState(() => _isSaving = false);
+        return;
+      }
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -122,6 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Mon Profil',
           style: TextStyle(
@@ -169,13 +179,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   TextFormField(
                     controller: _passwordController,
-                    readOnly: true,
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
                       filled: true,
-                      fillColor: Color(0xFFEEEEEE),
+                      fillColor: Color.fromARGB(255, 233, 230, 230),
                     ),
                   ),
                   const SizedBox(height: 16),
