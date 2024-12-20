@@ -4,7 +4,9 @@ import 'shop_content.dart';
 import 'cart_screen.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Map<String, dynamic>? newClothing;
+  
+  const HomePage({Key? key, this.newClothing}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -12,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  
 
   void _onItemTapped(int index) {
     setState(() {
@@ -19,11 +22,21 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final List<Widget> _pages = [
+  List<Widget> _pages = [
     const ShopContent(),
     const CartScreen(),
     const ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      ShopContent(newClothing: widget.newClothing),  // Passer le newClothing ici
+      const CartScreen(),
+      const ProfilePage(),
+    ];
+  }
 
   PreferredSizeWidget? _buildAppBar() {
     if (_selectedIndex == 2) {

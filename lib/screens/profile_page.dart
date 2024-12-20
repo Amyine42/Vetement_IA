@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'add_clothing_form.dart';
 import 'login_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -123,131 +124,175 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+Widget _buildAddClothingButton(BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 16.0),
+    child: ElevatedButton.icon(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddClothingForm()),
+        );
+      },
+      icon: Icon(Icons.add_circle_outline),
+      label: Text('Ajouter un vêtement'),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+      ),
+    ),
+  );
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Mon Profil',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+  @override
+Widget build(BuildContext context) {
+  if (_isLoading) {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  return Scaffold(
+    appBar: AppBar(
+      automaticallyImplyLeading: false,
+      title: const Text(
+        'Mon Profil',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      centerTitle: true,
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: TextButton(
+            onPressed: _handleLogout,
+            child: Text(
+              'Se déconnecter',
+              style: TextStyle(
+                color: _isSaving ? Colors.grey : Colors.blue,
+                fontSize: 16,
+              ),
+            ),
           ),
         ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: TextButton(
-              onPressed: _handleLogout,
-              child: Text(
-                'Se déconnecter',
-                style: TextStyle(
-                  color: _isSaving ? Colors.grey : Colors.blue,
-                  fontSize: 16,
+      ],
+    ),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _emailController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Login',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Color(0xFFEEEEEE),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 233, 230, 230),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _anniversaireController,
+                  decoration: const InputDecoration(
+                    labelText: 'Anniversaire',
+                    hintText: 'JJ/MM/AAAA',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                TextFormField(
+                  controller: _adresseController,
+                  decoration: const InputDecoration(
+                    labelText: 'Adresse',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _codePostalController,
+                  decoration: const InputDecoration(
+                    labelText: 'Code postal',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _villeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ville',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Nouveau bouton pour ajouter un vêtement
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddClothingForm()),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.add_circle_outline,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Ajouter un vêtement',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: Colors.blue, // Vous pouvez ajuster la couleur
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Bouton de validation
+                ElevatedButton(
+                  onPressed: _isSaving ? null : _saveUserData,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text(
+                    'Valider',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 68, 214, 134),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _emailController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Login',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Color(0xFFEEEEEE),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Color.fromARGB(255, 233, 230, 230),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    controller: _anniversaireController,
-                    decoration: const InputDecoration(
-                      labelText: 'Anniversaire',
-                      hintText: 'JJ/MM/AAAA',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  TextFormField(
-                    controller: _adresseController,
-                    decoration: const InputDecoration(
-                      labelText: 'Adresse',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    controller: _codePostalController,
-                    decoration: const InputDecoration(
-                      labelText: 'Code postal',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    controller: _villeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ville',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Bouton de déconnexion
-                  ElevatedButton(
-                    onPressed: _isSaving ? null : _saveUserData,
-                    style: ElevatedButton.styleFrom(
-                      
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text(
-                      'Valider',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 68, 214, 134),
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 }

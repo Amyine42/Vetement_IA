@@ -5,7 +5,9 @@ import 'package:vetement_ia/services/cart_service.dart';
 
 // Widget pour le contenu de la boutique
 class ShopContent extends StatefulWidget {
-  const ShopContent({Key? key}) : super(key: key);
+  final Map<String, dynamic>? newClothing;
+  
+  const ShopContent({Key? key, this.newClothing}) : super(key: key);
 
   @override
   State<ShopContent> createState() => _ShopContentState();
@@ -20,7 +22,49 @@ class _ShopContentState extends State<ShopContent> {
   void initState() {
     super.initState();
     _loadVetements();
+     // Ajouter le nouveau vêtement s'il existe
+    if (widget.newClothing != null) {
+      _addNewClothing(widget.newClothing!);
+    }
   }
+
+  void _addNewClothing(Map<String, dynamic> clothing) {
+  setState(() {
+    // Déterminer la catégorie appropriée
+    String categoryKey;
+    String categoryTitle;
+    switch(clothing['categorie'].toLowerCase()) {
+      case 'pull':
+        categoryKey = 'pulls';
+        categoryTitle = 'Pulls';
+        break;
+      case 'pantalon':
+        categoryKey = 'pantalons';
+        categoryTitle = 'Pantalons';
+        break;
+      case 't-shirt':
+        categoryKey = 'tshirts';
+        categoryTitle = 'T-Shirts';
+        break;
+      default:
+        // Créer une nouvelle catégorie si elle n'existe pas
+        categoryKey = clothing['categorie'].toLowerCase().replaceAll(' ', '_');
+        categoryTitle = clothing['categorie'];
+    }
+    
+    // Initialiser la liste si elle n'existe pas
+    _categories[categoryKey] ??= [];
+    
+    // Ajouter le vêtement à la catégorie
+    _categories[categoryKey]!.add(clothing);
+    
+    // Si c'est une nouvelle catégorie, ajouter la section dans le build
+    if (!_categories.containsKey(categoryKey)) {
+      // La section sera automatiquement ajoutée grâce au setState
+      _categories[categoryKey] = [clothing];
+    }
+  });
+}
 
   Future<void> _loadVetements() async {
     try {
@@ -256,23 +300,25 @@ class _ShopContentState extends State<ShopContent> {
 }
 
   @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadVetements,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCategorySection('Pulls', 'pulls'),
-            _buildCategorySection('Pantalons', 'pantalons'),
-            _buildCategorySection('T-Shirts', 'tshirts'),
-          ],
-        ),
-      ),
-    );
+Widget build(BuildContext context) {
+  if (_isLoading) {
+    return const Center(child: CircularProgressIndicator());
   }
+
+  return RefreshIndicator(
+    onRefresh: _loadVetements,
+    child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _categories.entries.map((entry) {
+          // Créer une section pour chaque catégorie
+          return _buildCategorySection(
+            entry.key.substring(0, 1).toUpperCase() + entry.key.substring(1),
+            entry.key,
+          );
+        }).toList(),
+      ),
+    ),
+  );
+}
 }
