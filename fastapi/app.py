@@ -24,7 +24,7 @@ app.add_middleware(
 # Obtenir le chemin du dossier parent
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Construire le chemin vers le modèle
-MODEL_PATH = os.path.join(parent_dir, "assets", "model_3.h5")
+MODEL_PATH = os.path.join(parent_dir, "assets", "clothes_model.h5")
 model = load_model(MODEL_PATH)
 # Recompiler le modèle
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
